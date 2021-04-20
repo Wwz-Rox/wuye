@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.EmployeeDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.Employee" >
+    <id column="employee_id" property="employeeId" jdbcType="INTEGER" />
+    <result column="employee_code" property="employeeCode" jdbcType="VARCHAR" />
+    <result column="employee_name" property="employeeName" jdbcType="VARCHAR" />
+    <result column="employee_phone" property="employeePhone" jdbcType="VARCHAR" />
+    <result column="employee_IDcard" property="employeeIdcard" jdbcType="VARCHAR" />
+    <result column="employee_addr" property="employeeAddr" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="ismarriage" property="ismarriage" jdbcType="VARCHAR" />
+    <result column="work_time" property="workTime" jdbcType="TIMESTAMP" />
+    <result column="employee_type" property="employeeType" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    employee_id, employee_code, employee_name, employee_phone, employee_IDcard, employee_addr, 
+    age, sex, ismarriage, work_time,employee_type
+  </sql>
+    <!--查询员工列表-->
+    <select id="selectToEmployee" resultMap="BaseResultMap" parameterType="org.edu.bo.employee.QryEmployeeReqBO" >
+        select
+        <include refid="Base_Column_List" />
+        from employee
+        where 1=1
+        <if test="employeeCode != null and employeeCode != '' ">
+            and employee_code like CONCAT('%',#{employeeCode},'%')
+        </if>
+        <if test="employeeName != null and employeeName != '' ">
+            and employee_name like CONCAT('%',#{employeeName},'%')
+        </if>
+        order by work_time desc
+    </select>
+    <!--查询员工是否存在-->
+    <select id="selectIsExist" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+        select
+        <include refid="Base_Column_List" />
+        from employee
+        where employee_name = #{employeeName,jdbcType=VARCHAR} and employee_code = #{employeeCode,jdbcType=VARCHAR}
+    </select>
+    <!--编辑员工-->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from employee
+    where employee_id = #{employeeId,jdbcType=INTEGER}
+  </select>
+    <update id="updateByPrimaryKeySelective" parameterType="org.edu.bo.employee.EditEmployeeReqBO" >
+        update employee
+        <set >
+            <if test="employeeCode != null" >
+                employee_code = #{employeeCode,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeName != null" >
+                employee_name = #{employeeName,jdbcType=VARCHAR},
+            </if>
+            <if test="employeePhone != null" >
+                employee_phone = #{employeePhone,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeIdcard != null" >
+                employee_IDcard = #{employeeIdcard,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeAddr != null" >
+                employee_addr = #{employeeAddr,jdbcType=VARCHAR},
+            </if>
+            <if test="age != null" >
+                age = #{age,jdbcType=INTEGER},
+            </if>
+            <if test="sex != null" >
+                sex = #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="ismarriage != null" >
+                ismarriage = #{ismarriage,jdbcType=VARCHAR},
+            </if>
+            <!--<if test="workTime != null" >-->
+                <!--work_time = #{workTime,jdbcType=TIMESTAMP},-->
+            <!--</if>-->
+            <if test="employeeType != null" >
+                employee_type = #{employeeType,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where employee_id = #{employeeId,jdbcType=INTEGER}
+    </update>
+    <!--删除员工-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from employee
+    where employee_id = #{employeeId,jdbcType=INTEGER}
+  </delete>
+    <!--添加员工-->
+  <insert id="insertSelective" parameterType="org.edu.bo.employee.AddEmployeeReqBO" >
+    insert into employee
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="employeeCode != null" >
+        employee_code,
+      </if>
+      <if test="employeeName != null" >
+        employee_name,
+      </if>
+      <if test="employeePhone != null" >
+        employee_phone,
+      </if>
+      <if test="employeeIdcard != null" >
+        employee_IDcard,
+      </if>
+      <if test="employeeAddr != null" >
+        employee_addr,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="ismarriage != null" >
+        ismarriage,
+      </if>
+        work_time,
+        <if test="employeeType != null" >
+            employee_type,
+        </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="employeeCode != null" >
+        #{employeeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeName != null" >
+        #{employeeName,jdbcType=VARCHAR},
+      </if>
+      <if test="employeePhone != null" >
+        #{employeePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeIdcard != null" >
+        #{employeeIdcard,jdbcType=VARCHAR},
+      </if>
+      <if test="employeeAddr != null" >
+        #{employeeAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="ismarriage != null" >
+        #{ismarriage,jdbcType=VARCHAR},
+      </if>
+      now(),
+        <if test="employeeType != null" >
+            #{employeeType,jdbcType=VARCHAR},
+        </if>
+    </trim>
+  </insert>
+    <insert id="insert" parameterType="org.edu.model.Employee" >
+    insert into employee (employee_id, employee_code, employee_name,
+      employee_phone, employee_IDcard, employee_addr,
+      age, sex, ismarriage,
+      work_time)
+    values (#{employeeId,jdbcType=INTEGER}, #{employeeCode,jdbcType=VARCHAR}, #{employeeName,jdbcType=VARCHAR},
+      #{employeePhone,jdbcType=VARCHAR}, #{employeeIdcard,jdbcType=VARCHAR}, #{employeeAddr,jdbcType=VARCHAR},
+      #{age,jdbcType=INTEGER}, #{sex,jdbcType=VARCHAR}, #{ismarriage,jdbcType=VARCHAR},
+      #{workTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.edu.model.Employee" >
+    update employee
+    set employee_code = #{employeeCode,jdbcType=VARCHAR},
+      employee_name = #{employeeName,jdbcType=VARCHAR},
+      employee_phone = #{employeePhone,jdbcType=VARCHAR},
+      employee_IDcard = #{employeeIdcard,jdbcType=VARCHAR},
+      employee_addr = #{employeeAddr,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      sex = #{sex,jdbcType=VARCHAR},
+      ismarriage = #{ismarriage,jdbcType=VARCHAR},
+      work_time = #{workTime,jdbcType=TIMESTAMP}
+    where employee_id = #{employeeId,jdbcType=INTEGER}
+  </update>
+</mapper>

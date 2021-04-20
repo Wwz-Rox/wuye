@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<!--添加管理员-->
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+<script src="js/vue.js" type="text/javascript" charset="UTF-8"></script>
+<script src="js/axios.min.js" type="text/javascript" charset="UTF-8"></script>
+<script src="js/全局.js" type="text/javascript" charset="UTF-8"></script>
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>添加管理员 - 管理员管理 - H-ui.admin v3.1</title>
+<meta name="keywords" content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description" content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+	<div id="app">
+<article class="page-container">
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-3">姓名：</label>
+		<div class="formControls col-xs-8 col-sm-5">
+			<input v-model="employeeName" type="text" class="input-text" >
+		</div>
+	</div>
+	&nbsp;&nbsp;
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-3">工号：</label>
+		<div class="formControls col-xs-8 col-sm-5">
+			<input v-model="employeeCode" type="text" class="input-text" >
+		</div>
+	</div>
+&nbsp;&nbsp;
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-3">性别：</label>
+		<div class="formControls col-xs-8 col-sm-9 skin-minimal">
+			<div class="radio-box">
+				<input type="radio" value="男" id="sex-1" v-model="checked">
+				<label for="sex-1">男</label>
+			</div>
+			<div class="radio-box">
+				<input type="radio" value="女" id="sex-2" v-model="checked">
+				<label for="sex-2">女</label>
+			</div>
+		</div>
+		</div>
+		&nbsp;&nbsp;
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-3">年龄：</label>
+		<div class="formControls col-xs-8 col-sm-3">
+			<input v-model="age" type="text" class="input-text" >
+		</div>
+	</div>
+	&nbsp;&nbsp;
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-3">婚否：</label>
+		<div class="formControls col-xs-8 col-sm-9 skin-minimal">
+			<div class="radio-box">
+				<input type="radio" id="hun-1" value="未婚" v-model="checkeds">
+				<label for="hun-1">未婚</label>
+			</div>
+			<div class="radio-box">
+				<input type="radio" id="hun-2" value="已婚" v-model="checkeds">
+				<label for="hun-2">已婚</label>
+			</div>
+		</div>
+			</div>
+			&nbsp;&nbsp;
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-3">手机：</label>
+		<div class="formControls col-xs-8 col-sm-5">
+			<input  v-model="employeePhone" type="text" class="input-text" >
+		</div>
+	</div>
+	&nbsp;&nbsp;
+		<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-4">身份证号：</label>
+		<div class="formControls col-xs-8 col-sm-5">
+			<input v-model="employeeIdcard" type="text" class="input-text" >
+		</div>
+	</div>&nbsp;&nbsp;
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-4">员工类型：</label>
+		<div class="formControls col-xs-8 col-sm-5"> <span class="select-box" style="width:150px;">
+			<select class="select" name="adminRole" size="1" v-model="selected">
+				<option value="保安">保安</option>
+				<option value="保洁">保洁</option>
+				<option value="门卫">门卫</option>
+				<option value="职员">职员</option>
+			</select>
+			</span> </div>
+	</div>
+	&nbsp;&nbsp;
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-3">住址：</label>
+		<div class="formControls col-xs-8 col-sm-5">
+			<input v-model="employeeAddr" type="text" class="input-text" >
+		</div>
+	</div>&nbsp;&nbsp;
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<!--<input @click="add" class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">-->
+				<button @click="edit" class="btn btn-primary radius" type="submit" >提交</button>
+		</div>
+	</div>
+</article>
+</div>
+<!--_footer 作为公共模版分离出去--> 
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script> 
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script> 
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script> 
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script> 
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script> 
+<!--/请在上方写此页面业务相关的脚本-->
+<script type="text/javascript">
+	axios.defaults.withCredentials=true;
+	var vue =new Vue({
+			el:'#app',     
+			data:{
+				selected:'',
+				employeeName:'',
+				employeeCode:'',
+				employeePhone:'',
+				employeeIdcard:'',
+				employeeAddr:'',
+				checkeds:'',
+				checked:'',
+				age:'',
+				workTime:''
+	
+			},
+			created:function(){
+				this.init();
+			},
+			methods:{
+				
+				role:function(){
+					
+				},
+//************************************************加载信息  ****************************************				
+				init:function(){
+					var self=this;
+//					alert("编辑页面进来了init函数");
+					var admid =sessionStorage.getItem("employeeId");
+//					alert("拿到编辑页面的管理员ID"+admid);
+					
+//					axios.get(web_server+"/adminDel",{params:{adminId:adid}})
+					
+					axios.get(web_server+"/EmployeeEdit",{params:{employeeId:admid}}) 
+					.then(function(result){
+						if(result.status==200){
+//							alert("查询成功！")
+//							alert("进来了，是"+JSON.stringify(result.data.data.employeeType));
+							if(result.data.data.employeeType == "保洁"){
+//								alert("进入if判断")
+								self.selected =result.data.data.employeeType;
+							}
+							if(result.data.data.employeeType == "保安"){
+								self.selected =result.data.data.employeeType;
+							}
+							if(result.data.data.employeeType == "门卫"){
+								self.selected =result.data.data.employeeType;
+							}
+							if(result.data.data.employeeType == "职员"){
+								self.selected =result.data.data.employeeType;
+							}
+//							alert("进来了，是"+JSON.stringify(result));
+//							self.selected.value=result.data.data.employeeType;
+							self.employeeName=result.data.data.employeeName;
+							self.employeeCode=result.data.data.employeeCode;
+							self.employeePhone=result.data.data.employeePhone;
+							self.employeeIdcard=result.data.data.employeeIdcard;
+							self.employeeAddr=result.data.data.employeeAddr;
+							self.checked=result.data.data.sex;
+							self.age=result.data.data.age;
+							self.workTime=result.data.data.workTime;
+							self.checkeds=result.data.data.ismarriage;
+						}
+					})
+					.catch(function(error){
+						console.log(error);
+					})
+				},
+//************************************************编辑  ****************************************			
+				edit:function(){
+//					alert("编辑页面来到编辑函数");
+					var admid =sessionStorage.getItem("employeeId");
+//					alert("拿到编辑函数的管理员ID"+admid);
+					var self=this;
+					var editAdminReqBO={
+				'employeeCode':self.employeeCode,
+					'employeeName':self.employeeName,
+					'employeePhone':self.employeePhone,
+					'employeeAddr':self.employeeAddr,
+					'age':self.age,
+					'sex':self.checked,
+					'ismarriage':self.checkeds,
+					'employeeType':self.selected,
+					'employeeId':admid,
+//					'workTime':self.workTime,
+					'employeeIdcard':self.employeeIdcard
+										};
+					axios.post(web_server+"/EmployeeEdit2",editAdminReqBO)
+					.then(function(result){
+//						alert("进来了，是"+JSON.stringify(result));//不知道为什么json数据最外层有个data
+						if(result.status==200){
+							layer.msg('编辑成功!',{icon:1,time:1000});
+            			setTimeout(function() {
+               					parent.location.href="employee-list.html"//在父页面打开新页面
+            					},800)
+						}else{
+							console.log(result.message);
+						}
+						
+					})
+					.catch(function(error){
+						console.log(error);
+					})
+					
+				}
+			
+			}
+		})
+	
+</script>
+</body>
+
+</html>

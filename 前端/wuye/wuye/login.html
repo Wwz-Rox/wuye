@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>物业管理系统用户登录</title>
+<link href="csss/login.css" rel="stylesheet" rev="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" src="jss/jQuery1.7.js"></script>
+<script type="text/javascript" src="jss/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="jss/jquery1.42.min.js"></script>
+<script type="text/javascript" src="jss/jquery.SuperSlide.js"></script>
+<script type="text/javascript" src="jss/Validform_v5.3.2_min.js"></script>
+<script src="js/tankuang.js"></script>
+<!--<script type="text/javascript" src="js/全局.js" ></script>-->
+<script type="text/javascript">
+$(document).ready(function(){
+	var $tab_li = $('#tab ul li');
+	$tab_li.hover(function(){
+		$(this).addClass('selected').siblings().removeClass('selected');
+		var index = $tab_li.index(this);
+		$('div.tab_box > div').eq(index).show().siblings().hide();
+	});	
+});
+</script>
+<script type="text/javascript">
+$(function(){
+$("#stu_username_hide").focus(function(){
+ var username = $(this).val();
+ if(username=='输入管理员帐号'){
+ $(this).val('');
+ }
+});
+$("#stu_username_hide").focusout(function(){
+ var username = $(this).val();
+ if(username==''){
+ $(this).val('输入管理员帐号');
+ }
+});
+$("#stu_password_hide").focus(function(){
+ var username = $(this).val();
+ if(username=='输入密码'){
+ $(this).val('');
+ }
+});
+$("#stu_password_hide").focusout(function(){
+ var username = $(this).val();
+ if(username==''){
+ $(this).val('输入密码');
+ }
+});
+$("#stu_code_hide").focus(function(){
+ var username = $(this).val();
+ if(username=='输入验证码'){
+ $(this).val('');
+ }
+});
+$("#stu_code_hide").focusout(function(){
+ var username = $(this).val();
+ if(username==''){
+ $(this).val('输入验证码');
+ }
+});
+$(".stu_login_error").Validform({
+	tiptype:function(msg,o,cssctl){
+		var objtip=$(".stu_error_box");
+		cssctl(objtip,o.type);
+//		objtip.text(msg);
+	},
+	ajaxPost:true
+}); 
+$("#tea_username_hide").focus(function(){
+ var username = $(this).val();
+ if(username=='输入业主帐号'){
+ $(this).val('');
+ }
+});
+$("#tea_username_hide").focusout(function(){
+ var username = $(this).val();
+ if(username==''){
+ $(this).val('输入业主帐号');
+ }
+});
+$("#tea_password_hide").focus(function(){
+ var username = $(this).val();
+ if(username=='输入密码'){
+ $(this).val('');
+ }
+});
+$("#tea_password_hide").focusout(function(){
+ var username = $(this).val();
+ if(username==''){
+ $(this).val('输入密码');
+ }
+});
+$("#tea_code_hide").focus(function(){
+ var username = $(this).val();
+ if(username=='输入验证码'){
+ $(this).val('');
+ }
+});
+$("#tea_code_hide").focusout(function(){
+ var username = $(this).val();
+ if(username==''){
+ $(this).val('输入验证码');
+ }
+});
+$(".tea_login_error").Validform({
+	tiptype:function(msg,o,cssctl){
+		var objtip=$(".tea_error_box");
+		cssctl(objtip,o.type);
+//		objtip.text(msg);
+	},
+	ajaxPost:true
+});
+});
+</script>
+<script type="text/javascript">
+$(function(){
+	$(".screenbg ul li").each(function(){
+		$(this).css("opacity","0");
+	});
+	$(".screenbg ul li:first").css("opacity","1");
+	var index = 0;
+	var t;
+	var li = $(".screenbg ul li");	
+	var number = li.size();
+	function change(index){
+		li.css("visibility","visible");
+		li.eq(index).siblings().animate({opacity:0},3000);
+		li.eq(index).animate({opacity:1},3000);
+	}
+	function show(){
+		index = index + 1;
+		if(index<=number-1){
+			change(index);
+		}else{
+			index = 0;
+			change(index);
+		}
+	}
+	t = setInterval(show,8000);
+	//根据窗口宽度生成图片宽度
+	var width = $(window).width();
+	$(".screenbg ul img").css("width",width+"px");
+});
+</script>
+</head>
+
+<body>
+<div id="tab">
+  <ul class="tab_menu">
+    <li class="selected">管理员登录</li>
+    <li>业主登录</li>
+    <!--<li>教务登录</li>-->
+  </ul>
+  <div class="tab_box"> 
+    <!-- 管理员登录开始 -->
+    <div>
+      <div class="stu_error_box"></div>
+      	 <form action="" method="post" class="stu_login_error">
+        <div id="username">
+          <label>账&nbsp;&nbsp;&nbsp;号：</label>
+          <input type="text" id="stu_username_hide" name="adminName" value="输入管理员帐号" nullmsg="管理员帐号不能为空！" datatype="s1-6" errormsg="管理员帐号范围在1~6个字符之间！" sucmsg="管理员帐号验证通过！"/>
+        </div>
+        <div id="password">
+          <label>密&nbsp;&nbsp;&nbsp;码：</label>
+          <input type="password" id="stu_password_hide" name="adminPassword" value="" nullmsg="密码不能为空！" datatype="*1-6" errormsg="密码范围在1~6位之间！" sucmsg="密码验证通过！"/>
+        </div>
+        <div id="adminlogin">
+          <button type="submit">登录</button>
+        </div>
+      </form>
+    </div>
+   <!-- 管理员登录结束-->
+   <!-- 职员登录开始-->
+    <div class="hide">
+     <div class="tea_error_box"></div>
+      <form action="" method="post" class="tea_login_error">
+        <div id="username">
+          <label>账&nbsp;&nbsp;&nbsp;号：</label>
+          <input type="text" id="tea_username_hide" name="username" value="输入业主帐号" nullmsg="业主帐号不能为空！" datatype="s1-6" errormsg="业主帐号范围在1~6个字符之间！" sucmsg="员工帐号验证通过！"/>
+          <!--ajaxurl="demo/valid.jsp"--> 
+        </div>
+        <div id="password">
+          <label>密&nbsp;&nbsp;&nbsp;码：</label>
+          <input type="password" id="tea_password_hide" name="password" value="" nullmsg="密码不能为空！" datatype="*1-6" errormsg="密码范围在1~6位之间！" sucmsg="密码验证通过！"/>
+        </div>
+        <div id="employeelogin">
+          <button type="submit" >登录</button>
+        </div>
+      </form>
+    </div>
+    <!-- 职员登录结束-->
+  </div>
+</div>
+<div class="bottom">©2019 Leting 
+	<a href="javascript:;" target="_blank">关于</a> 
+	<span>京ICP证030173号</span>  
+	More Templates 
+	
+	<!--- Collect from <img width="13" height="16" src="images/copy_rignt_24.png" />-->
+</div>
+<div class="screenbg">
+  <ul>
+    <li><a href="javascript:;"><img src="images/admin-login-bg.jpg"></a></li>
+    <!--<li><a href="javascript:;"><img src="images/1.jpg"></a></li>
+    <li><a href="javascript:;"><img src="images/2.jpg"></a></li>-->
+  </ul>
+</div>
+</body>
+<script type="text/javascript">
+	$(document).ready(function(){
+/*
+ * 管理员登陆
+ */
+$("#adminlogin").click(function(){
+						var adminLoginReqBO={
+						'adminName':$("#stu_username_hide").val(),
+						'adminPassword':$("#stu_password_hide").val()
+						};
+					$.ajax({
+						url:'http://localhost:8080/wuye_war/wuye/adminlogin',
+						dataType:'json',
+						type:'POST',
+						contentType: "application/json;charset=UTF-8",
+						data:JSON.stringify(adminLoginReqBO),
+						xhrFields: {
+			       			 withCredentials: true
+			    		},
+						success:function(result){
+							if(result.status==200){
+								var role =result.data.adminRole;
+								if(role =='管理员'){
+//										alert("角色是"+result.data.adminRole)
+								sessionStorage.setItem("loginUser",$("#stu_username_hide").val());
+								sessionStorage.setItem("role",result.data.adminRole);
+//             					window.location.href="index.html"
+//								alert("登陆成功！");
+								swal("登陆成功!", "", "success");
+								setTimeout(function() {
+               					window.location.href="index.html"
+            					},800)
+								}else{
+									swal("登录入口与角色不符!", "", "error");
+								}
+								}else if(result.status==404){
+									swal("用户名或者密码错误!", "", "error");
+//									alert("用户名或者密码错误");
+								}else if(result.status==201){
+									swal("此用户已被停用!", "", "warning");
+//									alert("此用户已被停用");
+								}
+							}
+						})
+					});
+/*
+ * 职员登陆
+ */
+					$("#employeelogin").click(function(){ 
+						var adminLoginReqBO={
+						'adminName':$("#tea_username_hide").val(),
+						'adminPassword':$("#tea_password_hide").val()
+						};
+					$.ajax({
+						url:'http://localhost:8080/wuye_war/wuye/adminlogin',
+						dataType:'json',
+						type:'POST',
+						contentType: "application/json;charset=UTF-8",
+						data:JSON.stringify(adminLoginReqBO),
+						xhrFields: {
+			       			 withCredentials: true
+			    		},
+						success:function(result){
+							if(result.status==200){
+								var role =result.data.adminRole;
+								if(role =='柜台职员'){
+//								alert("角色是"+result.data.adminRole)
+	                            sessionStorage.setItem("employeeName",$("#tea_username_hide").val());
+	                            sessionStorage.setItem("role",result.data.adminRole);
+								var admid =sessionStorage.getItem("employeeName");
+//									alert("拿到名称"+admid);
+								swal("登陆成功!", "", "success");
+								setTimeout(function() {
+               					window.location.href="index2.html"
+            					},800)
+								}else{
+									swal("登录入口与角色不符!", "", "error");
+								}
+								}else if(result.status==404){
+									swal("用户名或者密码错误!", "", "error");
+								}else if(result.status==201){
+									swal("此用户已被停用!", "", "warning");
+								}
+							}
+						})
+					})
+					
+					})
+</script> 
+</html>

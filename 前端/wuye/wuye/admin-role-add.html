@@ -1,0 +1,121 @@
+﻿<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="Bookmark" href="/favicon.ico" >
+<link rel="Shortcut Icon" href="/favicon.ico" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+<script src="js/vue.js" type="text/javascript" charset="UTF-8"></script>
+<script src="js/axios.min.js" type="text/javascript" charset="UTF-8"></script>
+<script src="js/全局.js" type="text/javascript" charset="UTF-8"></script>
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--/meta 作为公共模版分离出去-->
+
+<title>新建网站角色 - 管理员管理 - H-ui.admin v3.1</title>
+<meta name="keywords" content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description" content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+	<div id="app">
+<article class="page-container">
+	<!--<form action="" method="post" class="form form-horizontal" id="form-admin-role-add">-->
+		<div class="row cl">
+			<label class="form-label col-xs-3 col-sm-4">角色名称：</label>
+			<div class="formControls col-xs-8 col-sm-5">
+				<input type="text" class="input-text" v-model="adminRoleName">
+			</div>
+		</div>
+		&nbsp;&nbsp;
+		<div class="row cl">
+			<label class="form-label col-xs-3 col-sm-4">描述：</label>
+			<div class="formControls col-xs-8 col-sm-5">
+				<input type="text" class="input-text" v-model="adminRoleDesc">
+			</div>
+		</div>
+		&nbsp;&nbsp;
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button @click="add" type="submit" class="btn btn-success radius" ><i class="icon-ok"></i> 确定</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<button @click="Reset" class="btn btn-success radius" type="buttton" >重置</button>
+			</div>
+		</div>
+	<!--</form>-->
+</article>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script> 
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script> 
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script>
+
+<!--/请在上方写此页面业务相关的脚本-->
+<script type="text/javascript">
+	axios.defaults.withCredentials=true;
+	var vue =new Vue({
+			el:'#app',     
+			data:{
+				adminRoleName:'',
+				adminRoleDesc:''
+			},
+			methods:{
+				
+				add:function(){
+//					alert("进入方法");
+					var self=this;
+					var addAdminReqBO={
+					'adminRoleName':self.adminRoleName,
+					'adminRoleDesc':self.adminRoleDesc
+					};
+					axios.post(web_server+"/AdminRoleAdd",addAdminReqBO)
+					.then(function(result){
+//						alert("进来了，是"+JSON.stringify(result));
+						if(result.data.status==200){
+							layer.msg('添加成功!',{icon:1,time:1000});
+            			setTimeout(function() {
+               					parent.location.href="admin-role.html"//在父页面打开新页面
+            					},800)
+							
+						}else{
+								layer.msg('此管理员角色已存在!',{icon:2,time:2000});
+            			setTimeout(function() {
+               					parent.location.href="admin-role.html"//在父页面打开新页面
+            					},800)
+						}
+						
+					})
+					.catch(function(error){
+						alert("出错了");
+						console.log(error);
+					})
+				},
+					Reset:function(){
+			this.adminRoleName="";
+				this.adminRoleDesc="";
+				}		
+			}
+		})
+	
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.EquipmentDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.Equipment" >
+    <result column="equipment_id" property="equipmentId" jdbcType="BIGINT" />
+    <result column="equipment_name" property="equipmentName" jdbcType="VARCHAR" />
+    <result column="equipment_addr" property="equipmentAddr" jdbcType="VARCHAR" />
+    <result column="stall_time" property="stallTime" jdbcType="TIMESTAMP" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+    <result column="equipment_type" property="equipmentType" jdbcType="VARCHAR" />
+  </resultMap>
+    <sql id="Base_Column_List" >
+    equipment_id, equipment_name, equipment_addr, stall_time,note,equipment_type
+  </sql>
+    <!--查询设备是否存在-->
+    <select id="selectEquipmentIsExist" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from equipment
+        where  equipment_name = #{equipmentName,jdbcType=VARCHAR}
+    </select>
+    <!--设备列表查询-->
+    <select id="selecttoEquipment" resultMap="BaseResultMap" parameterType="org.edu.bo.equipment.QryEquipmentReqBO">
+        select
+        <include refid="Base_Column_List"/>
+        from equipment
+        where 1=1
+        <if test="equipmentName != null and equipmentName != '' ">
+            and equipment_name like CONCAT('%',#{equipmentName},'%')
+        </if>
+        <if test="startTime != null ">
+            and stall_time between #{startTime}
+        </if>
+        <if test="endTime != null ">
+            and  #{endTime}
+        </if>
+    </select>
+    <!--编辑房屋-->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select
+        <include refid="Base_Column_List" />
+        from equipment
+        where equipment_id = #{equipmentId,jdbcType=BIGINT}
+    </select>
+    <update id="updateByPrimaryKeySelective" parameterType="org.edu.bo.equipment.EditEquipmentReqBO" >
+        update equipment
+        <set >
+            <if test="equipmentName != null" >
+                equipment_name = #{equipmentName,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentAddr != null" >
+                equipment_addr = #{equipmentAddr,jdbcType=VARCHAR},
+            </if>
+            <if test="note != null" >
+                note = #{note,jdbcType=VARCHAR},
+            </if>
+            <if test="equipmentType != null" >
+                equipment_type = #{equipmentType,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where equipment_id = #{equipmentId,jdbcType=BIGINT}
+    </update>
+    <!--删除房屋-->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from equipment
+    where equipment_id = #{equipmentId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.edu.model.Equipment" >
+    insert into equipment (equipment_id, equipment_name, equipment_addr, 
+      stall_time, note, equipment_type
+      )
+    values (#{equipmentId,jdbcType=BIGINT}, #{equipmentName,jdbcType=VARCHAR}, #{equipmentAddr,jdbcType=VARCHAR}, 
+      #{stallTime,jdbcType=TIMESTAMP}, #{note,jdbcType=VARCHAR}, #{equipmentType,jdbcType=VARCHAR}
+      )
+  </insert>
+    <!--添加设备-->
+  <insert id="insertEquipment" parameterType="org.edu.bo.equipment.AddEquipmentReqBO" >
+    insert into equipment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="equipmentName != null" >
+        equipment_name,
+      </if>
+      <if test="equipmentAddr != null" >
+        equipment_addr,
+      </if>
+        stall_time,
+      <if test="note != null" >
+        note,
+      </if>
+      <if test="equipmentType != null" >
+        equipment_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="equipmentName != null" >
+        #{equipmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentAddr != null" >
+        #{equipmentAddr,jdbcType=VARCHAR},
+      </if>
+        now(),
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentType != null" >
+        #{equipmentType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

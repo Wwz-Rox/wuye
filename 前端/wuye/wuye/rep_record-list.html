@@ -1,0 +1,269 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+	<!--管理员列表-->
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="Bookmark" href="/favicon.ico" >
+<link rel="Shortcut Icon" href="/favicon.ico" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+<script src="js/vue.js" type="text/javascript" charset="UTF-8"></script>
+<script src="js/axios.min.js" type="text/javascript" charset="UTF-8"></script>
+<script src="js/全局.js" type="text/javascript" charset="UTF-8"></script>
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>维修记录列表</title>
+</head>
+<body>
+<div id="app" >
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 维修管理 <span class="c-gray en">&gt;</span> 维修记录列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="text-c"> 日期范围：
+		<input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}' })" id="datemin" class="input-text Wdate" style="width:120px;">
+		-
+		<input type="text" onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d' })" id="datemax" class="input-text Wdate" style="width:120px;">
+		<input type="text" class="input-text" style="width:250px" placeholder="输入维修人员名称" id="adname" name="" v-model="a">
+		<button type="submit" class="btn btn-success" id="" @click="qry" name=""><i class="Hui-iconfont">&#xe665;</i> 搜记录</button>
+	</div>
+	<div class="cl pd-5 bg-1 bk-gray mt-20">
+			<span class="l">
+		<form action="http://localhost:8080/wuye_war/wuye/RepairRecordExcel">
+			<!--<button class="btn btn-primary radius" type="submit">导出数据</button>-->
+		</form>
+		</span>
+			<span class="r">共有数据：<strong>{{recordsTotal}}</strong> 条</span> </div>
+	<table class="table table-border table-bordered table-bg">
+		<thead>
+			<tr>
+				<!--colspan指单元格可横跨的列数-->
+				<th scope="col" colspan="12">维修记录列表</th>
+			</tr>
+			<tr class="text-c">
+				<th width="40">编号</th>
+				<th width="100">设备名称</th>
+				<th width="130">设备地点</th>
+				<th width="90">状态</th>
+				<th width="100">报修时间</th>
+				<th width="100">维修时间</th>
+				<th width="100">维修人员</th>
+				<th width="100">所属公司</th>
+				<th width="100">维修人员工号</th>
+				<th width="100">维修人员电话</th>
+				<th width="100">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="text-c" v-for="rows in list">
+				<td class="td-id">{{rows.recordId}}</td>
+				<td id="adminName">{{rows.recordName}}</td>
+				<td id="adminRole">{{rows.recordAddr}}</td>
+				<td class="td-status"><span class="label label-success radius">{{rows.status}}</span></td>
+				<td id="telphone">{{rows.askrepairTime}}</td>
+				<td id="eMail">{{rows.repTime}}</td>
+				<td id="createTime">{{rows.repPerson}}</td>
+				<td id="createTime">{{rows.repCompany}}</td>
+				<td id="createTime">{{rows.repairNum}}</td>
+				<td id="createTime">{{rows.repairPhone}}</td>
+				<td class="td-manage">
+					<a title="删除" v-if="name == '管理员'" :id="rows.recordId"  @click="del" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>
+				</td>
+					
+			</tr>
+		</tbody>
+	</table>
+	<div class="r">
+		<a @click="uppage" class="btn btn-primary radius">上一页</a>
+		<a class="btn btn-default-outline radius">第{{i}}页</a>
+		<a @click="downpage" class="btn btn-primary radius">下一页</a>
+	</div>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script> 
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script> 
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script> 
+<script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
+</div>
+<script type="text/javascript">
+	axios.defaults.withCredentials=true;
+		var vue =new Vue({
+			el:"#app",
+			data:{
+				list:[],
+				recordsTotal:'',
+				name:'',
+				total:'',
+				a:''
+			},
+			created:function(){
+				this.init();
+			},
+			methods:{
+//************************************************加载信息  ****************************************				
+				init:function(){
+					var self=this;
+					self.name=sessionStorage.getItem("role");
+//					alert("进来了init函数");
+					var qryRepairRecordReqBO={
+					};
+					axios.post(web_server+"/repairRecordList",qryRepairRecordReqBO) 
+					.then(function(result){
+//						alert("result是"+result)
+//						alert("进来了，是"+JSON.stringify(result));//不知道为什么json数据最外层有个data
+//						alert("返回数据的message是"+result.data.message)//  "查询成功"
+//						alert("返回数据的message是"+result.message)//undefined
+//						alert("返回数据的status是"+result.data.status)//200
+//						alert("返回得总数是"+result.data.data.recordsTotal)//5
+						
+//						alert("返回数据的rows是"+result.data.data.rows)
+						if(result.status==200){
+//							alert("if条件块中返回数据的status是"+result.status)
+//							alert("message"+result.data.message)
+//							alert("查询成功！")
+//							alert(JSON.stringify("回调函数的数据"+ result.data.data.rows));
+//							alert("222！")
+							
+							self.list=result.data.data.rows;
+							self.recordsTotal=result.data.data.recordsTotal;
+							self.i=result.data.data.pageNo;
+							self.total=result.data.data.total;
+							
+						}
+					})
+					.catch(function(error){
+//						alert("出错了")
+						console.log(error);
+					})
+				},
+//************************************************条件查询  ****************************************		
+	qry:function(){
+					var self=this;
+//					alert("进来了qry函数");
+					var qryRepairRecordReqBO={
+						'repPerson':$("#adname").val(),
+						'startTime':$("#datemin").val(),
+						'endTime':$("#datemax").val()
+					};
+					axios.post(web_server+"/repairRecordList",qryRepairRecordReqBO) 
+					.then(function(result){
+//						alert(JSON.stringify("回调函数的数据"+ result.data.data.rows));
+						if(result.status==200){
+							self.list=result.data.data.rows;
+							self.recordsTotal=result.data.data.recordsTotal;
+								self.i=result.data.data.pageNo;
+							self.total=result.data.data.total;
+						}
+					})
+					.catch(function(error){
+						console.log(error);
+					})
+				},
+//************************************************删除  ******************************************************					
+		del:function(e){
+//			alert("进入删除")
+			var adid=e.currentTarget.id;
+//			alert("数据ID是"+adid)
+			layer.confirm('确认要删除吗？',function(index){
+		axios.get(web_server+"/repairRecordDel",{params:{recordId:adid}})
+					.then(function(result){
+						if(result.data.status==200){
+							layer.msg('删除成功!',{icon:1,time:1000});
+            		setTimeout(function() {
+            	  			 	window.location.href="rep_record-list.html"
+            						},800)
+							
+						}
+						
+					})
+					.catch(function(error){
+						console.log(error);
+					})	
+					})
+		},
+		
+//************************************************上一页 ******************************************************		
+				uppage:function(){
+					var self=this;
+					if(this.i==1){
+//							alert("已经是第一页了")
+							layer.msg('已经是第一页了!',{icon: 5,time:1000});
+						return
+							}
+					var qryRepairRecordReqBO={
+						'repPerson':self.a,
+						'pageNo':this.i-1
+					};
+//		console.log("页数是"+this.i-1)
+					axios.post(web_server+"/repairRecordList",qryRepairRecordReqBO) 
+					.then(function(result){
+//							alert("返回数据的rows是"+result.data.data.rows)
+//							alert("返回数据的状态是"+result.status)
+						if(result.status==200){
+							self.list=result.data.data.rows;
+							self.recordsTotal=result.data.data.recordsTotal;
+							self.i=result.data.data.pageNo;
+							self.total=result.data.data.total;
+						}
+					})
+					.catch(function(error){
+						console.log(error);
+					})
+					
+					
+				},					
+//************************************************下一页 ******************************************************					
+				downpage:function(){
+//		alert("进入下一页事件！")
+					var self=this;
+					if(this.i==this.total){
+//								alert("已经是最后页了")
+								layer.msg('已经是最后页了!',{icon: 5,time:1000});
+								return;
+							}
+		var qryRepairRecordReqBO={
+			           'repPerson':self.a,
+						'pageNo':this.i+1
+					};
+//					console.log("页数是"+this.i+1)
+					axios.post(web_server+"/repairRecordList",qryRepairRecordReqBO) 
+					.then(function(result){
+//							alert("返回数据的rows是"+result.data.data.rows)
+//							alert("返回数据的状态是"+result.status)
+						if(result.status==200){
+							self.list=result.data.data.rows;
+							self.recordsTotal=result.data.data.recordsTotal;
+							self.i=result.data.data.pageNo;
+							self.total=result.data.data.total;
+						}
+					})
+					.catch(function(error){
+						console.log(error);
+					})
+					
+					
+				}	
+				
+			}
+		})
+				
+	</script>
+</body>
+
+</html>

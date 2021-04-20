@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx.xsd
+                        http://www.springframework.org/schema/aop
+                        http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!-- 自动扫描 -->
+    <context:component-scan base-package="org.edu"/>
+    <!--<mvc:annotation-driven></mvc:annotation-driven>-->
+    <!-- 第一种方式：加载一个properties文件 -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:jdbc.properties"/>
+    </bean>
+    <!-- 第二种方式：加载多个properties文件
+    <bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>classpath:jdbc.properties</value>
+                <value>classpath:common.properties</value>
+            </list>
+        </property>
+        <property name="fileEncoding" value="UTF-8"/>
+    </bean>
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name="properties" ref="configProperties"/>
+    </bean>
+    -->
+    <!-- 配置数据源 -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${driverClasss}"/>
+        <property name="url" value="${jdbcUrl}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+        <!-- 初始化连接大小 -->
+        <property name="initialSize" value="${initialSize}"></property>
+        <!-- 连接池最大数量 -->
+        <property name="maxActive" value="${maxActive}"></property>
+        <!-- 连接池最大空闲 -->
+        <property name="maxIdle" value="${maxIdle}"></property>
+        <!-- 连接池最小空闲 -->
+        <property name="minIdle" value="${minIdle}"></property>
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait" value="${maxWait}"></property>
+        <!-- timeBetweenEvictionRunsMillis间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <!-- minEvictableIdleTimeMillis 一个连接在池中最小空闲的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="300000"/>
+        <property name="validationQuery" value="SELECT 'z'"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="testOnReturn" value="false"/>
+    </bean>
+
+    <!-- mybatis文件配置，扫描所有mapper文件 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 自动扫描mapping.xml文件 -->
+        <property name="mapperLocations" value="classpath*:org/edu/mapper/*.xml"></property>
+        <property name="ConfigLocation" value="classpath:mybatis-config.xml"></property>
+
+    </bean>
+    <!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="org.edu.dao"/>
+        <!--<property name="annotationClass" value="org.springframework.stereotype.Repository"></property>-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+    </bean>
+
+    <!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"-->
+          <!--p:dataSource-ref="custinfoDataSource" p:configLocation="classpath:mybatis-config.xml"-->
+          <!--p:mapperLocations="classpath*:jsp/mapper/*.xml"-->
+          <!--p:typeAliasesPackage="jsp.model" />-->
+
+
+    <!-- 事务相关控制 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--声明式事务 -->
+    <tx:advice id="transactionTxAdvice" transaction-manager="transactionManager">
+        <!--<tx:attributes>-->
+            <!--<tx:method name="add*" propagation="REQUIRED" isolation="DEFAULT"-->
+                       <!--timeout="-1" read-only="false" rollback-for="java.lang.Exception"/>-->
+            <!--<tx:method name="insert*" propagation="REQUIRED" isolation="DEFAULT"-->
+                       <!--timeout="-1" read-only="false" rollback-for="java.lang.Exception"/>-->
+            <!--<tx:method name="create*" propagation="REQUIRED" isolation="DEFAULT"-->
+                       <!--timeout="-1" read-only="false" rollback-for="java.lang.Exception"/>-->
+            <!--<tx:method name="update*" propagation="REQUIRED" isolation="DEFAULT"-->
+                       <!--timeout="-1" read-only="false" rollback-for="java.lang.Exception"/>-->
+            <!--<tx:method name="delete*" propagation="REQUIRED" isolation="DEFAULT"-->
+                       <!--timeout="-1" read-only="false" rollback-for="java.lang.Exception"/>-->
+            <!--<tx:method name="remove*" propagation="REQUIRED" isolation="DEFAULT"-->
+                       <!--timeout="-1" read-only="false" rollback-for="java.lang.Exception"/>-->
+            <!--<tx:method name="*" read-only="true"/>-->
+        <!--</tx:attributes>-->
+    </tx:advice>
+    <!-- 事务 aop 配置 -->
+    <aop:config>
+        <aop:pointcut id="aopPointcut" expression="execution(* org.edu.service.*..*(..))"></aop:pointcut>
+        <aop:advisor pointcut-ref="aopPointcut" advice-ref="transactionTxAdvice"></aop:advisor>
+    </aop:config>
+</beans>

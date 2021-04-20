@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.RepairRecordDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.RepairRecord" >
+    <id column="record_id" property="recordId" jdbcType="BIGINT" />
+    <result column="record_name" property="recordName" jdbcType="VARCHAR" />
+    <result column="record_addr" property="recordAddr" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="askrepair_time" property="askrepairTime" jdbcType="TIMESTAMP" />
+    <result column="rep_time" property="repTime" jdbcType="TIMESTAMP" />
+    <result column="rep_person" property="repPerson" jdbcType="VARCHAR" />
+      <result column="rep_company" property="repCompany" jdbcType="VARCHAR" />
+      <result column="repair_num" property="repairNum" jdbcType="VARCHAR" />
+      <result column="repair_phone" property="repairPhone" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    record_id, record_name, record_addr, status, askrepair_time, rep_time, rep_person,rep_company,repair_num,repair_phone
+  </sql>
+    <!--查询记录列表-->
+  <select id="selectRecord" resultMap="BaseResultMap" parameterType="org.edu.bo.repairRecord.QryRepairRecordReqBO" >
+    select 
+    <include refid="Base_Column_List" />
+    from repair_record
+    where 1=1
+      <if test="repPerson != null and repPerson != '' ">
+        and rep_person like CONCAT('%',#{repPerson},'%')
+      </if>
+      <if test="startTime != null ">
+          and rep_time between #{startTime}
+      </if>
+      <if test="endTime != null ">
+          and  #{endTime}
+      </if>
+    order by rep_time desc
+  </select>
+    <!--删除记录列表-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from repair_record
+    where record_id = #{recordId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.edu.model.RepairRecord" >
+    insert into repair_record (record_id, record_name, record_addr, 
+      status, askrepair_time, rep_time, 
+      rep_person)
+    values (#{recordId,jdbcType=BIGINT}, #{recordName,jdbcType=VARCHAR}, #{recordAddr,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{askrepairTime,jdbcType=TIMESTAMP}, #{repTime,jdbcType=TIMESTAMP}, 
+      #{repPerson,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="org.edu.model.RepairRecord" >
+    insert into repair_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="recordId != null" >
+        record_id,
+      </if>
+      <if test="recordName != null" >
+        record_name,
+      </if>
+      <if test="recordAddr != null" >
+        record_addr,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="askrepairTime != null" >
+        askrepair_time,
+      </if>
+      <if test="repTime != null" >
+        rep_time,
+      </if>
+      <if test="repPerson != null" >
+        rep_person,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recordId != null" >
+        #{recordId,jdbcType=BIGINT},
+      </if>
+      <if test="recordName != null" >
+        #{recordName,jdbcType=VARCHAR},
+      </if>
+      <if test="recordAddr != null" >
+        #{recordAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="askrepairTime != null" >
+        #{askrepairTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="repTime != null" >
+        #{repTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="repPerson != null" >
+        #{repPerson,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.edu.model.RepairRecord" >
+    update repair_record
+    <set >
+      <if test="recordName != null" >
+        record_name = #{recordName,jdbcType=VARCHAR},
+      </if>
+      <if test="recordAddr != null" >
+        record_addr = #{recordAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="askrepairTime != null" >
+        askrepair_time = #{askrepairTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="repTime != null" >
+        rep_time = #{repTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="repPerson != null" >
+        rep_person = #{repPerson,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where record_id = #{recordId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.edu.model.RepairRecord" >
+    update repair_record
+    set record_name = #{recordName,jdbcType=VARCHAR},
+      record_addr = #{recordAddr,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      askrepair_time = #{askrepairTime,jdbcType=TIMESTAMP},
+      rep_time = #{repTime,jdbcType=TIMESTAMP},
+      rep_person = #{repPerson,jdbcType=VARCHAR}
+    where record_id = #{recordId,jdbcType=BIGINT}
+  </update>
+</mapper>

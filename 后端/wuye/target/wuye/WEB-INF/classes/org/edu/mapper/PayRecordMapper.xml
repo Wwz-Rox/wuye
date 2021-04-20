@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.PayRecordDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.PayRecord" >
+    <id column="pcord_id" property="pcordId" jdbcType="INTEGER" />
+    <result column="pcord_name" property="pcordName" jdbcType="VARCHAR" />
+    <result column="pcord_adrr" property="pcordAdrr" jdbcType="VARCHAR" />
+    <result column="pcord_card" property="pcordCard" jdbcType="VARCHAR" />
+    <result column="pcord_type" property="pcordType" jdbcType="VARCHAR" />
+    <result column="pcord_num" property="pcordNum" jdbcType="BIGINT" />
+    <result column="pcord_time" property="pcordTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    pcord_id, pcord_name, pcord_adrr, pcord_card, pcord_type, pcord_num, pcord_time
+  </sql>
+  <!--查询缴费记录-->
+  <select id="selectPayRecord" resultMap="BaseResultMap" parameterType="org.edu.bo.money.QryPayRecordReqBO" >
+    select
+    <include refid="Base_Column_List" />
+    from pay_record
+    where 1=1
+    <if test="idCard != null and idCard != '' ">
+      and pcord_card like CONCAT('%',#{idCard},'%')
+    </if>
+    <if test="payCordName != null and payCordName != '' ">
+      and pcord_name like CONCAT('%',#{payCordName},'%')
+    </if>
+    order by pcord_time desc
+  </select>
+  <!--缴费记录删除-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from pay_record
+    where pcord_id = #{pcordId,jdbcType=INTEGER}
+  </delete>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from pay_record
+    where pcord_id = #{pcordId,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="org.edu.model.PayRecord" >
+    insert into pay_record (pcord_id, pcord_name, pcord_adrr, 
+      pcord_card, pcord_type, pcord_num, 
+      pcord_time)
+    values (#{pcordId,jdbcType=INTEGER}, #{pcordName,jdbcType=VARCHAR}, #{pcordAdrr,jdbcType=VARCHAR}, 
+      #{pcordCard,jdbcType=VARCHAR}, #{pcordType,jdbcType=VARCHAR}, #{pcordNum,jdbcType=BIGINT}, 
+      #{pcordTime,jdbcType=TIMESTAMP})
+  </insert>
+  <!--插入缴费记录表-->
+  <insert id="insertSelective" parameterType="org.edu.model.PayRecord" >
+    insert into pay_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pcordName != null" >
+        pcord_name,
+      </if>
+      <if test="pcordAdrr != null" >
+        pcord_adrr,
+      </if>
+      <if test="pcordCard != null" >
+        pcord_card,
+      </if>
+      <if test="pcordType != null" >
+        pcord_type,
+      </if>
+      <if test="pcordNum != null" >
+        pcord_num,
+      </if>
+        pcord_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pcordName != null" >
+        #{pcordName,jdbcType=VARCHAR},
+      </if>
+      <if test="pcordAdrr != null" >
+        #{pcordAdrr,jdbcType=VARCHAR},
+      </if>
+      <if test="pcordCard != null" >
+        #{pcordCard,jdbcType=VARCHAR},
+      </if>
+      <if test="pcordType != null" >
+        #{pcordType,jdbcType=VARCHAR},
+      </if>
+      <if test="pcordNum != null" >
+        #{pcordNum,jdbcType=BIGINT},
+      </if>
+      now(),
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.edu.model.PayRecord" >
+    update pay_record
+    <set >
+      <if test="pcordName != null" >
+        pcord_name = #{pcordName,jdbcType=VARCHAR},
+      </if>
+      <if test="pcordAdrr != null" >
+        pcord_adrr = #{pcordAdrr,jdbcType=VARCHAR},
+      </if>
+      <if test="pcordCard != null" >
+        pcord_card = #{pcordCard,jdbcType=VARCHAR},
+      </if>
+      <if test="pcordType != null" >
+        pcord_type = #{pcordType,jdbcType=VARCHAR},
+      </if>
+      <if test="pcordNum != null" >
+        pcord_num = #{pcordNum,jdbcType=BIGINT},
+      </if>
+      <if test="pcordTime != null" >
+        pcord_time = #{pcordTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where pcord_id = #{pcordId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.edu.model.PayRecord" >
+    update pay_record
+    set pcord_name = #{pcordName,jdbcType=VARCHAR},
+      pcord_adrr = #{pcordAdrr,jdbcType=VARCHAR},
+      pcord_card = #{pcordCard,jdbcType=VARCHAR},
+      pcord_type = #{pcordType,jdbcType=VARCHAR},
+      pcord_num = #{pcordNum,jdbcType=BIGINT},
+      pcord_time = #{pcordTime,jdbcType=TIMESTAMP}
+    where pcord_id = #{pcordId,jdbcType=INTEGER}
+  </update>
+</mapper>

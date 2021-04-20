@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.AdminDao" >
+    <resultMap id="BaseResultMap" type="org.edu.model.Admin" >
+        <id column="admin_id" property="adminId" jdbcType="INTEGER" />
+        <result column="admin_name" property="adminName" jdbcType="VARCHAR" />
+        <result column="admin_password" property="adminPassword" jdbcType="VARCHAR" />
+        <result column="admin_role" property="adminRole" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="telphone" property="telphone" jdbcType="VARCHAR" />
+        <result column="e_mail" property="eMail" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+    admin_id, admin_name, admin_password, admin_role, create_time, status, telphone,
+    e_mail
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from admin
+        where admin_id = #{adminId,jdbcType=INTEGER}
+    </select>
+    <!--查询管理员是否存在-->
+    <select id="selectIsExist" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        from admin
+        where admin_name = #{adminName,jdbcType=VARCHAR}
+    </select>
+    <!--查询管理员角色-->
+    <select id="selectAdminName" resultType="java.lang.String" parameterType="java.lang.String" >
+        select
+       admin_name
+        from admin
+        where admin_role = #{adminRoleName,jdbcType=VARCHAR}
+    </select>
+    <!--管理员删除-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from admin
+    where admin_id = #{adminId,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="org.edu.model.Admin" >
+    insert into admin (admin_id, admin_name, admin_password,
+      admin_role, create_time, status,
+      telphone, e_mail)
+    values (#{adminId,jdbcType=INTEGER}, #{adminName,jdbcType=VARCHAR}, #{adminPassword,jdbcType=VARCHAR},
+      #{adminRole,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER},
+      #{telphone,jdbcType=VARCHAR}, #{eMail,jdbcType=VARCHAR})
+  </insert>
+    <!--管理员添加-->
+    <insert id="insertSelective" parameterType="org.edu.bo.admin.AddAdminReqBO" >
+        insert into admin
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="adminName != null" >
+                admin_name,
+            </if>
+            <if test="adminPassword != null" >
+                admin_password,
+            </if>
+            <if test="adminRole != null" >
+                admin_role,
+            </if>
+                create_time,
+                status,
+            <if test="telphone != null" >
+                telphone,
+            </if>
+            <if test="eMail != null" >
+                e_mail,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+
+            <if test="adminName != null" >
+                #{adminName,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPassword != null" >
+                #{adminPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="adminRole != null" >
+                #{adminRole,jdbcType=VARCHAR},
+            </if>
+            now(),
+            "已启用",
+            <if test="telphone != null" >
+                #{telphone,jdbcType=VARCHAR},
+            </if>
+            <if test="eMail != null" >
+                #{eMail,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <!--个人信息-->
+    <select id="selectInfo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        from admin
+        where admin_name = #{adminName}
+    </select>
+    <!--管理员编辑-->
+    <select id="selectOneAdmin" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from admin
+        where admin_id = #{adminId}
+    </select>
+    <update id="updateByPrimaryKeySelective" parameterType="org.edu.bo.admin.EditAdminReqBO" >
+        update admin
+        <set >
+            <if test="adminName != null" >
+                admin_name = #{adminName,jdbcType=VARCHAR},
+            </if>
+            <if test="adminPassword != null" >
+                admin_password = #{adminPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="adminRole != null" >
+                admin_role = #{adminRole,jdbcType=VARCHAR},
+            </if>
+            <!--<if test="createTime != null" >-->
+                <!--create_time = #{createTime,jdbcType=TIMESTAMP},-->
+            <!--</if>-->
+            <!--<if test="status != null" >-->
+                <!--status = #{status,jdbcType=INTEGER},-->
+            <!--</if>-->
+            <if test="telphone != null" >
+                telphone = #{telphone,jdbcType=VARCHAR},
+            </if>
+            <if test="eMail != null" >
+                e_mail = #{eMail,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where admin_id = #{adminId,jdbcType=INTEGER}
+    </update>
+    <!--修改密码-->
+    <update id="updateAdminPass" parameterType="org.edu.model.Admin" >
+    update admin
+    set
+      admin_password = #{adminPassword,jdbcType=VARCHAR}
+    where admin_name = #{adminName,jdbcType=VARCHAR}
+  </update>
+    <!--管理员登陆-->
+  <select id="selectAdmin" resultMap="BaseResultMap" parameterType="org.edu.bo.admin.AdminLoginReqBO" >
+        select
+        <include refid="Base_Column_List" />
+        from admin
+        where admin_name = #{adminName} and admin_password = #{adminPassword}
+  </select>
+    <!--插入记录表-->
+    <insert id="insertRe" parameterType="org.edu.bo.admin.AdminLoginReqBO" >
+   INSERT into admin_record
+    (admin_record_name,admin_record_role,admin_record_tel,admin_record_time)
+    (select
+    admin_name,admin_role,telphone,now()
+    from admin
+    where admin_name = #{adminName} and admin_password = #{adminPassword} )
+  </insert>
+    <!--管理员列表查询-->
+    <!--<select id="selectAdminList" resultType="org.edu.model.Admin" parameterType="org.edu.bo.admin.QryAdminReqBO">-->
+    <select id="selectAdminList" resultMap="BaseResultMap" parameterType="org.edu.bo.admin.QryAdminReqBO">
+        select
+        <include refid="Base_Column_List"/>
+        from admin
+        where
+        1=1
+        <if test="adminName != null and adminName != '' ">
+            and admin_name like CONCAT('%',#{adminName},'%')
+        </if>
+        <if test="startTime != null ">
+            and create_time between #{startTime}
+        </if>
+        <if test="endTime != null ">
+            and  #{endTime}
+        </if>
+        order by create_time desc
+        <!--大于小于取时间-->
+        <!--<if test="startTime != null ">-->
+            <!--and create_time >= #{startTime}-->
+        <!--</if>-->
+        <!--<if test="endTime != null ">-->
+            <!--and create_time &lt;= #{endTime}-->
+        <!--</if>-->
+    </select>
+<!--更新状态-->
+    <update id="updateAdminStatus" parameterType="java.lang.Integer">
+        update admin
+      set status = "已启用"
+      where admin_id = #{adminId,jdbcType=INTEGER}
+    </update>
+    <update id="updateAdminStatusNot" parameterType="java.lang.Integer">
+        update admin
+      set status = "已停用"
+       where admin_id = #{adminId,jdbcType=INTEGER}
+    </update>
+</mapper>

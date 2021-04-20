@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.ComplaintDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.Complaint" >
+    <id column="complaint_id" property="complaintId" jdbcType="INTEGER" />
+    <result column="complaint_title" property="complaintTitle" jdbcType="VARCHAR" />
+    <result column="complaint_name" property="complaintName" jdbcType="VARCHAR" />
+    <result column="complaint_tel" property="complaintTel" jdbcType="VARCHAR" />
+    <result column="complaint_content" property="complaintContent" jdbcType="VARCHAR" />
+    <result column="complaint_time" property="complaintTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    complaint_id, complaint_name, complaint_tel, complaint_content, complaint_time,complaint_title
+  </sql>
+  <!--查询投诉是否存在-->
+  <select id="selectComplaintIsExist" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from complaint
+    where complaint_title = #{complaintTitle,jdbcType=VARCHAR}
+  </select>
+  <!--查询投诉列表-->
+  <select id="selectComplaintList" resultMap="BaseResultMap" parameterType="org.edu.bo.complaint.QryComplaintReqBO" >
+    select
+    <include refid="Base_Column_List" />
+    from complaint
+    where 1=1
+    <if test="complaintTitle != null and complaintTitle != '' ">
+      and complaint_title like CONCAT('%',#{complaintTitle},'%')
+    </if>
+    <if test="startTime != null ">
+      and complaint_time between #{startTime}
+    </if>
+    <if test="endTime != null ">
+      and  #{endTime}
+    </if>
+    order by complaint_time desc
+  </select>
+  <!--编辑投诉-->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from complaint
+    where complaint_id = #{complaintId,jdbcType=INTEGER}
+  </select>
+  <update id="updateByPrimaryKeySelective" parameterType="org.edu.bo.complaint.EditComplaintReqBO" >
+    update complaint
+    <set >
+      <if test="complaintTitle != null" >
+        complaint_title = #{complaintTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="complaintName != null" >
+        complaint_name = #{complaintName,jdbcType=VARCHAR},
+      </if>
+      <if test="complaintTel != null" >
+        complaint_tel = #{complaintTel,jdbcType=VARCHAR},
+      </if>
+      <if test="complaintContent != null" >
+        complaint_content = #{complaintContent,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where complaint_id = #{complaintId,jdbcType=INTEGER}
+  </update>
+  <!--删除投诉-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from complaint
+    where complaint_id = #{complaintId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.edu.model.Complaint" >
+    insert into complaint (complaint_id, complaint_name, complaint_tel, 
+      complaint_content, complaint_time)
+    values (#{complaintId,jdbcType=INTEGER}, #{complaintName,jdbcType=VARCHAR}, #{complaintTel,jdbcType=VARCHAR}, 
+      #{complaintContent,jdbcType=VARCHAR}, #{complaintTime,jdbcType=TIMESTAMP})
+  </insert>
+  <!--添加投诉-->
+  <insert id="insertSelective" parameterType="org.edu.bo.complaint.AddComplaintReqBO" >
+    insert into complaint
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="complaintTitle != null" >
+        complaint_title ,
+      </if>
+      <if test="complaintName != null" >
+        complaint_name,
+      </if>
+      <if test="complaintTel != null" >
+        complaint_tel,
+      </if>
+      <if test="complaintContent != null" >
+        complaint_content,
+      </if>
+        complaint_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="complaintTitle != null" >
+        #{complaintTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="complaintName != null" >
+        #{complaintName,jdbcType=VARCHAR},
+      </if>
+      <if test="complaintTel != null" >
+        #{complaintTel,jdbcType=VARCHAR},
+      </if>
+      <if test="complaintContent != null" >
+        #{complaintContent,jdbcType=VARCHAR},
+      </if>
+        now(),
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.edu.model.Complaint" >
+    update complaint
+    set complaint_name = #{complaintName,jdbcType=VARCHAR},
+      complaint_tel = #{complaintTel,jdbcType=VARCHAR},
+      complaint_content = #{complaintContent,jdbcType=VARCHAR},
+      complaint_time = #{complaintTime,jdbcType=TIMESTAMP}
+    where complaint_id = #{complaintId,jdbcType=INTEGER}
+  </update>
+</mapper>

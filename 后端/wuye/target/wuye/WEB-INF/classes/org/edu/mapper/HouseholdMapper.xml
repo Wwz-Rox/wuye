@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.HouseholdDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.Household" >
+    <id column="household_id" property="householdId" jdbcType="BIGINT" />
+    <result column="household_name" property="householdName" jdbcType="VARCHAR" />
+    <result column="owner_name" property="ownerName" jdbcType="VARCHAR" />
+    <result column="household_cardID" property="householdCardid" jdbcType="VARCHAR" />
+    <result column="household_phone" property="householdPhone" jdbcType="VARCHAR" />
+    <result column="live_date" property="liveDate" jdbcType="TIMESTAMP" />
+    <result column="live_time" property="liveTime" jdbcType="VARCHAR" />
+    <result column="house_addr" property="houseAddr" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    household_id, household_name, owner_name, household_cardID, household_phone, live_date, 
+    live_time, house_addr
+  </sql>
+    <!--查询租户是否存在-->
+    <select id="selectIsExist" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+        select
+        <include refid="Base_Column_List" />
+        from household
+        where household_name = #{householdName,jdbcType=VARCHAR} and household_cardID = #{householdCardid,jdbcType=VARCHAR}
+    </select>
+    <!--查询租户列表-->
+    <select id="selectToHousehold" resultMap="BaseResultMap" parameterType="org.edu.bo.household.QryHouseholdReqBO" >
+        select
+        <include refid="Base_Column_List" />
+        from household
+        where 1=1
+        <if test="householdName != null and householdName != '' ">
+            and household_name like CONCAT('%',#{householdName},'%')
+        </if>
+        <if test="householdCardid != null and householdCardid != '' ">
+            and household_cardID like CONCAT('%',#{householdCardid},'%')
+        </if>
+    </select>
+    <!--编辑租户-->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from household
+    where household_id = #{householdId,jdbcType=BIGINT}
+  </select>
+    <update id="updateByPrimaryKeySelective" parameterType="org.edu.bo.household.EditHouseholdReqBO" >
+        update household
+        <set >
+            <if test="householdName != null" >
+                household_name = #{householdName,jdbcType=VARCHAR},
+            </if>
+            <if test="ownerName != null" >
+                owner_name = #{ownerName,jdbcType=VARCHAR},
+            </if>
+            <if test="householdCardid != null" >
+                household_cardID = #{householdCardid,jdbcType=VARCHAR},
+            </if>
+            <if test="householdPhone != null" >
+                household_phone = #{householdPhone,jdbcType=VARCHAR},
+            </if>
+            <!--<if test="liveDate != null" >-->
+                <!--live_date = #{liveDate,jdbcType=TIMESTAMP},-->
+            <!--</if>-->
+            <if test="liveTime != null" >
+                live_time = #{liveTime,jdbcType=VARCHAR},
+            </if>
+            <if test="houseAddr != null" >
+                house_addr = #{houseAddr,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where household_id = #{householdId,jdbcType=BIGINT}
+    </update>
+    <!--删除租户-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from household
+    where household_id = #{householdId,jdbcType=BIGINT}
+  </delete>
+    <!--添加租户-->
+  <insert id="insertSelective" parameterType="org.edu.bo.household.AddHouseholdReqBO" >
+    insert into household
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="householdName != null" >
+        household_name,
+      </if>
+      <if test="ownerName != null" >
+        owner_name,
+      </if>
+      <if test="householdCardid != null" >
+        household_cardID,
+      </if>
+      <if test="householdPhone != null" >
+        household_phone,
+      </if>
+        live_date,
+      <if test="liveTime != null" >
+        live_time,
+      </if>
+      <if test="houseAddr != null" >
+        house_addr,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="householdName != null" >
+        #{householdName,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerName != null" >
+        #{ownerName,jdbcType=VARCHAR},
+      </if>
+      <if test="householdCardid != null" >
+        #{householdCardid,jdbcType=VARCHAR},
+      </if>
+      <if test="householdPhone != null" >
+        #{householdPhone,jdbcType=VARCHAR},
+      </if>
+      now(),
+      <if test="liveTime != null" >
+        #{liveTime,jdbcType=VARCHAR},
+      </if>
+      <if test="houseAddr != null" >
+        #{houseAddr,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+    <insert id="insert" parameterType="org.edu.model.Household" >
+    insert into household (household_id, household_name, owner_name,
+      household_cardID, household_phone, live_date,
+      live_time, house_addr)
+    values (#{householdId,jdbcType=BIGINT}, #{householdName,jdbcType=VARCHAR}, #{ownerName,jdbcType=VARCHAR},
+      #{householdCardid,jdbcType=VARCHAR}, #{householdPhone,jdbcType=VARCHAR}, #{liveDate,jdbcType=TIMESTAMP},
+      #{liveTime,jdbcType=VARCHAR}, #{houseAddr,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.edu.model.Household" >
+    update household
+    set household_name = #{householdName,jdbcType=VARCHAR},
+      owner_name = #{ownerName,jdbcType=VARCHAR},
+      household_cardID = #{householdCardid,jdbcType=VARCHAR},
+      household_phone = #{householdPhone,jdbcType=VARCHAR},
+      live_date = #{liveDate,jdbcType=TIMESTAMP},
+      live_time = #{liveTime,jdbcType=VARCHAR},
+      house_addr = #{houseAddr,jdbcType=VARCHAR}
+    where household_id = #{householdId,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.NoticeDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.Notice" >
+    <id column="notice_id" property="noticeId" jdbcType="INTEGER" />
+    <result column="notice_title" property="noticeTitle" jdbcType="VARCHAR" />
+    <result column="notice_content" property="noticeContent" jdbcType="VARCHAR" />
+    <result column="notice_time" property="noticeTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    notice_id, notice_title, notice_content, notice_time
+  </sql>
+  <!--查询公告是否存在-->
+  <select id="selectNoticeIsExist" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from notice
+    where notice_title = #{noticeTitle,jdbcType=VARCHAR}
+  </select>
+  <!--查询公告列表-->
+  <select id="selectNoticeList" resultMap="BaseResultMap" parameterType="org.edu.bo.notice.QryNoticeReqBO" >
+    select
+    <include refid="Base_Column_List" />
+    from notice
+    where 1=1
+    <if test="noticeTitle != null and noticeTitle != '' ">
+      and notice_title like CONCAT('%',#{noticeTitle},'%')
+    </if>
+    <if test="startTime != null ">
+      and notice_time between #{startTime}
+    </if>
+    <if test="endTime != null ">
+      and  #{endTime}
+    </if>
+    order by notice_time desc
+  </select>
+  <!--编辑公告-->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from notice
+    where notice_id = #{noticeId,jdbcType=INTEGER}
+  </select>
+  <update id="updateByPrimaryKeySelective" parameterType="org.edu.bo.notice.EditNoticeReqBO" >
+    update notice
+    <set >
+      <if test="noticeTitle != null" >
+        notice_title = #{noticeTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeContent != null" >
+        notice_content = #{noticeContent,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where notice_id = #{noticeId,jdbcType=INTEGER}
+  </update>
+  <!--删除公告-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from notice
+    where notice_id = #{noticeId,jdbcType=INTEGER}
+  </delete>
+  <!--添加公告-->
+  <insert id="insertSelective" parameterType="org.edu.bo.notice.AddNoticeReqBO" >
+    insert into notice
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="noticeTitle != null" >
+        notice_title,
+      </if>
+      <if test="noticeContent != null" >
+        notice_content,
+      </if>
+        notice_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="noticeTitle != null" >
+        #{noticeTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="noticeContent != null" >
+        #{noticeContent,jdbcType=VARCHAR},
+      </if>
+     now(),
+    </trim>
+  </insert>
+  <insert id="insert" parameterType="org.edu.model.Notice" >
+    insert into notice (notice_id, notice_title, notice_content, 
+      notice_time)
+    values (#{noticeId,jdbcType=INTEGER}, #{noticeTitle,jdbcType=VARCHAR}, #{noticeContent,jdbcType=VARCHAR}, 
+      #{noticeTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.edu.model.Notice" >
+    update notice
+    set notice_title = #{noticeTitle,jdbcType=VARCHAR},
+      notice_content = #{noticeContent,jdbcType=VARCHAR},
+      notice_time = #{noticeTime,jdbcType=TIMESTAMP}
+    where notice_id = #{noticeId,jdbcType=INTEGER}
+  </update>
+</mapper>

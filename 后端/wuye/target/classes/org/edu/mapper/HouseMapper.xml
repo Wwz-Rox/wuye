@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.HouseDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.House" >
+    <id column="house_id" property="houseId" jdbcType="BIGINT" />
+    <result column="building_number" property="buildingNumber" jdbcType="VARCHAR" />
+    <result column="unit_number" property="unitNumber" jdbcType="VARCHAR" />
+    <result column="house_number" property="houseNumber" jdbcType="VARCHAR" />
+    <result column="house_size" property="houseSize" jdbcType="VARCHAR" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+    <result column="house_type" property="houseType" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    house_id, building_number, unit_number, house_number, house_size, note, house_type
+  </sql>
+    <!--查询房屋是否存在-->
+    <select id="selectHouseIsExist" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+        select
+        <include refid="Base_Column_List" />
+        from house
+        where    building_number = #{buildingNumber,jdbcType=VARCHAR} and
+        unit_number = #{unitNumber,jdbcType=VARCHAR} and
+        house_number = #{houseNumber,jdbcType=VARCHAR}
+    </select>
+    <!--查询房屋列表-->
+    <select id="selectToHouse" resultMap="BaseResultMap" parameterType="org.edu.bo.house.QryHouseReqBO" >
+        select
+        <include refid="Base_Column_List" />
+        from house
+        where 1=1
+        <if test="houseType != null and houseType != '' ">
+            and house_type like CONCAT('%',#{houseType},'%')
+        </if>
+    </select>
+    <!--编辑房屋-->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from house
+    where house_id = #{houseId,jdbcType=BIGINT}
+  </select>
+    <update id="updateByPrimaryKeySelective" parameterType="org.edu.bo.house.EditHouseReqBO" >
+        update house
+        <set >
+            <if test="buildingNumber != null" >
+                building_number = #{buildingNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="unitNumber != null" >
+                unit_number = #{unitNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="houseNumber != null" >
+                house_number = #{houseNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="houseSize != null" >
+                house_size = #{houseSize,jdbcType=VARCHAR},
+            </if>
+            <if test="note != null" >
+                note = #{note,jdbcType=VARCHAR},
+            </if>
+            <if test="houseType != null" >
+                house_type = #{houseType,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where house_id = #{houseId,jdbcType=BIGINT}
+    </update>
+    <!--删除房屋-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from house
+    where house_id = #{houseId,jdbcType=BIGINT}
+  </delete>
+<!--添加房屋-->
+  <insert id="insertSelective" parameterType="org.edu.bo.house.AddHouseReqBO" >
+    insert into house
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="buildingNumber != null" >
+        building_number,
+      </if>
+      <if test="unitNumber != null" >
+        unit_number,
+      </if>
+      <if test="houseNumber != null" >
+        house_number,
+      </if>
+      <if test="houseSize != null" >
+        house_size,
+      </if>
+      <if test="note != null" >
+        note,
+      </if>
+      <if test="houseType != null" >
+        house_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="buildingNumber != null" >
+        #{buildingNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="unitNumber != null" >
+        #{unitNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="houseNumber != null" >
+        #{houseNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="houseSize != null" >
+        #{houseSize,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="houseType != null" >
+        #{houseType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+    <insert id="insert" parameterType="org.edu.model.House" >
+    insert into house (house_id, building_number, unit_number,
+      house_number, house_size, note,
+      house_type)
+    values (#{houseId,jdbcType=BIGINT}, #{buildingNumber,jdbcType=VARCHAR}, #{unitNumber,jdbcType=VARCHAR},
+      #{houseNumber,jdbcType=VARCHAR}, #{houseSize,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR},
+      #{houseType,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.edu.model.House" >
+    update house
+    set building_number = #{buildingNumber,jdbcType=VARCHAR},
+      unit_number = #{unitNumber,jdbcType=VARCHAR},
+      house_number = #{houseNumber,jdbcType=VARCHAR},
+      house_size = #{houseSize,jdbcType=VARCHAR},
+      note = #{note,jdbcType=VARCHAR},
+      house_type = #{houseType,jdbcType=VARCHAR}
+    where house_id = #{houseId,jdbcType=BIGINT}
+  </update>
+</mapper>

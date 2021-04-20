@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.AdminRoleDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.AdminRole" >
+    <id column="admin_role_id" property="adminRoleId" jdbcType="INTEGER" />
+    <result column="admin_role_name" property="adminRoleName" jdbcType="VARCHAR" />
+    <result column="admin_role_list" property="adminRoleList" jdbcType="VARCHAR" />
+    <result column="admin_role_desc" property="adminRoleDesc" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    admin_role_id, admin_role_name, admin_role_list, admin_role_desc
+  </sql>
+    <!--查询单个管理员角色-->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from admin_role
+    where admin_role_id = #{adminRoleId,jdbcType=INTEGER}
+  </select>
+  <!--查询管理员角色是否存在-->
+  <select id="selectRoleIsExist" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from admin_role
+    where admin_role_name = #{adminRoleName,jdbcType=VARCHAR}
+  </select>
+    <!--查询管理员角色-->
+    <select id="selectAdminRole" resultMap="BaseResultMap" parameterType="org.edu.bo.adminRole.QryAdminRoleReqBO" >
+        select
+        <include refid="Base_Column_List" />
+        from admin_role
+       where 1=1
+        <if test="adminRoleName != null and adminRoleName != '' ">
+          and admin_role_name like CONCAT('%',#{adminRoleName},'%')
+        </if>
+    </select>
+    <!--删除管理员角色-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from admin_role
+    where admin_role_id = #{adminRoleId,jdbcType=INTEGER}
+  </delete>
+    <!--添加管理员角色-->
+  <insert id="insertAdminRole" parameterType="org.edu.bo.adminRole.AddAdminRoleReqBO" >
+    insert into admin_role ( admin_role_name, admin_role_list,
+      admin_role_desc)
+    values ( #{adminRoleName,jdbcType=VARCHAR}, #{adminRoleList,jdbcType=VARCHAR},
+      #{adminRoleDesc,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="org.edu.model.AdminRole" >
+    insert into admin_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="adminRoleId != null" >
+        admin_role_id,
+      </if>
+      <if test="adminRoleName != null" >
+        admin_role_name,
+      </if>
+      <if test="adminRoleList != null" >
+        admin_role_list,
+      </if>
+      <if test="adminRoleDesc != null" >
+        admin_role_desc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="adminRoleId != null" >
+        #{adminRoleId,jdbcType=INTEGER},
+      </if>
+      <if test="adminRoleName != null" >
+        #{adminRoleName,jdbcType=VARCHAR},
+      </if>
+      <if test="adminRoleList != null" >
+        #{adminRoleList,jdbcType=VARCHAR},
+      </if>
+      <if test="adminRoleDesc != null" >
+        #{adminRoleDesc,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.edu.bo.adminRole.EditAdminRoleReqBO" >
+    update admin_role
+    <set >
+      <if test="adminRoleName != null" >
+        admin_role_name = #{adminRoleName,jdbcType=VARCHAR},
+      </if>
+      <if test="adminRoleList != null" >
+        admin_role_list = #{adminRoleList,jdbcType=VARCHAR},
+      </if>
+      <if test="adminRoleDesc != null" >
+        admin_role_desc = #{adminRoleDesc,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where admin_role_id = #{adminRoleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.edu.model.AdminRole" >
+    update admin_role
+    set admin_role_name = #{adminRoleName,jdbcType=VARCHAR},
+      admin_role_list = #{adminRoleList,jdbcType=VARCHAR},
+      admin_role_desc = #{adminRoleDesc,jdbcType=VARCHAR}
+    where admin_role_id = #{adminRoleId,jdbcType=INTEGER}
+  </update>
+</mapper>

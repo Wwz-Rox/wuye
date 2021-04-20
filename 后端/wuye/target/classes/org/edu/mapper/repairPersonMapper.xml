@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.RepairPersonDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.RepairPerson" >
+    <id column="repair_id" property="repairId" jdbcType="INTEGER" />
+    <result column="equ_repair_id" property="equRepairId" jdbcType="BIGINT" />
+    <result column="repair_name" property="repairName" jdbcType="VARCHAR" />
+      <result column="repair_num" property="repairNum" jdbcType="VARCHAR" />
+    <result column="repair_tel" property="repairTel" jdbcType="VARCHAR" />
+    <result column="company" property="company" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    repair_id, equ_repair_id, repair_name, repair_tel, company,repair_num
+  </sql>
+    <!--查询维修人员是否存在-->
+    <select id="selectPersonIsExist" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+        select
+        <include refid="Base_Column_List" />
+        from repair_person
+        where repair_name = #{repairName,jdbcType=VARCHAR} and  repair_num = #{repairNum,jdbcType=VARCHAR}
+    </select>
+    <!--维修人员编辑-->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from repair_person
+    where repair_id = #{repairId,jdbcType=INTEGER}
+  </select>
+  <update id="updateByPrimaryKeySelective" parameterType="org.edu.bo.repairPerson.EditRepairPersonReqBO" >
+        update repair_person
+        <set >
+            <if test="repairNum != null" >
+                repair_num = #{repairNum,jdbcType=VARCHAR},
+            </if>
+            <if test="repairName != null" >
+                repair_name = #{repairName,jdbcType=VARCHAR},
+            </if>
+            <if test="repairTel != null" >
+                repair_tel = #{repairTel,jdbcType=VARCHAR},
+            </if>
+            <if test="company != null" >
+                company = #{company,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where repair_id = #{repairId,jdbcType=INTEGER}
+    </update>
+    <!--删除维修人员-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from repair_person
+    where repair_id = #{repairId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.edu.model.RepairPerson" >
+    insert into repair_person (repair_id, equ_repair_id, repair_name, 
+      repair_tel, company)
+    values (#{repairId,jdbcType=INTEGER}, #{equRepairId,jdbcType=BIGINT}, #{repairName,jdbcType=VARCHAR}, 
+      #{repairTel,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR})
+  </insert>
+    <!--查询维修人员-->
+    <select id="selectRepairPerson" resultMap="BaseResultMap" parameterType="org.edu.bo.repairPerson.QryRepairPersonReqBO" >
+        select
+        <include refid="Base_Column_List" />
+        from repair_person
+        where 1=1
+        <if test="repairNum != null and repairNum != '' ">
+            and repair_num like CONCAT('%',#{repairNum},'%')
+        </if>
+        <if test="repairName != null and repairName != '' ">
+            and repair_name like CONCAT('%',#{repairName},'%')
+        </if>
+    </select>
+    <!--添加维修人员-->
+  <insert id="insertSelective" parameterType="org.edu.bo.repairPerson.AddRepairPersonReqBO" >
+    insert into repair_person
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+
+      <!--<if test="equRepairId != null" >-->
+        <!--equ_repair_id,-->
+      <!--</if>-->
+      <if test="repairName != null" >
+        repair_name,
+      </if>
+        <if test="repairNum != null" >
+            repair_num,
+        </if>
+      <if test="repairTel != null" >
+        repair_tel,
+      </if>
+      <if test="company != null" >
+        company,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+
+      <!--<if test="equRepairId != null" >-->
+        <!--#{equRepairId,jdbcType=BIGINT},-->
+      <!--</if>-->
+        <if test="repairNum != null" >
+            #{repairNum,jdbcType=VARCHAR},
+        </if>
+      <if test="repairName != null" >
+        #{repairName,jdbcType=VARCHAR},
+      </if>
+      <if test="repairTel != null" >
+        #{repairTel,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        #{company,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+    <!--equ_repair_id入值-->
+    <update id="updateEqurepairid">
+        update repair_person
+        set equ_repair_id = repair_id
+    </update>
+  <update id="updateByPrimaryKey" parameterType="org.edu.model.RepairPerson" >
+    update repair_person
+    set equ_repair_id = #{equRepairId,jdbcType=BIGINT},
+      repair_name = #{repairName,jdbcType=VARCHAR},
+      repair_tel = #{repairTel,jdbcType=VARCHAR},
+      company = #{company,jdbcType=VARCHAR}
+    where repair_id = #{repairId,jdbcType=INTEGER}
+  </update>
+</mapper>

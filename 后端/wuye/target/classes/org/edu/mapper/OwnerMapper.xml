@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.OwnerDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.Owner" >
+    <id column="owner_id" property="ownerId" jdbcType="BIGINT" />
+    <result column="owner_name" property="ownerName" jdbcType="VARCHAR" />
+    <result column="owner_cardID" property="ownerCardid" jdbcType="VARCHAR" />
+    <result column="owner_phone" property="ownerPhone" jdbcType="VARCHAR" />
+    <result column="owner_contract" property="ownerContract" jdbcType="VARCHAR" />
+    <result column="buy_date" property="buyDate" jdbcType="TIMESTAMP" />
+    <result column="work_place" property="workPlace" jdbcType="VARCHAR" />
+    <result column="house_address" property="houseAddress" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    owner_id, owner_name, owner_cardID, owner_phone, owner_contract, buy_date, work_place, 
+    house_address
+  </sql>
+    <!--查询业主是否存在-->
+    <select id="selectOwnerIsExist" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
+        select
+        <include refid="Base_Column_List" />
+        from owner
+        where owner_name = #{ownerName,jdbcType=VARCHAR} and  owner_cardID = #{ownerCardid,jdbcType=VARCHAR}
+    </select>
+    <!--查询业主列表-->
+    <select id="selectToOwner" resultMap="BaseResultMap" parameterType="org.edu.bo.owner.QryOwnerReqBO" >
+        select
+        <include refid="Base_Column_List" />
+        from owner
+        where 1=1
+        <if test="ownerName != null and ownerName != '' ">
+            and owner_name like CONCAT('%',#{ownerName},'%')
+        </if>
+        <if test="ownerCardid != null and ownerCardid != '' ">
+            and owner_cardID like CONCAT('%',#{ownerCardid},'%')
+        </if>
+    </select>
+    <!--编辑业主列表-->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from owner
+    where owner_id = #{ownerId,jdbcType=BIGINT}
+  </select>
+    <update id="updateByPrimaryKeySelective" parameterType="org.edu.bo.owner.EditOwnerReqBO" >
+        update owner
+        <set >
+            <if test="ownerName != null" >
+                owner_name = #{ownerName,jdbcType=VARCHAR},
+            </if>
+            <if test="ownerCardid != null" >
+                owner_cardID = #{ownerCardid,jdbcType=VARCHAR},
+            </if>
+            <if test="ownerPhone != null" >
+                owner_phone = #{ownerPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="ownerContract != null" >
+                owner_contract = #{ownerContract,jdbcType=VARCHAR},
+            </if>
+            <!--<if test="buyDate != null" >-->
+                <!--buy_date = #{buyDate,jdbcType=TIMESTAMP},-->
+            <!--</if>-->
+            <if test="workPlace != null" >
+                work_place = #{workPlace,jdbcType=VARCHAR},
+            </if>
+            <if test="houseAddress != null" >
+                house_address = #{houseAddress,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where owner_id = #{ownerId,jdbcType=BIGINT}
+    </update>
+    <!--删除业主-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from owner
+    where owner_id = #{ownerId,jdbcType=BIGINT}
+  </delete>
+    <!--添加业主-->
+  <insert id="insertSelective" parameterType="org.edu.bo.owner.AddOwnerReqBO" >
+    insert into owner
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ownerName != null" >
+        owner_name,
+      </if>
+      <if test="ownerCardid != null" >
+        owner_cardID,
+      </if>
+      <if test="ownerPhone != null" >
+        owner_phone,
+      </if>
+      <if test="ownerContract != null" >
+        owner_contract,
+      </if>
+        buy_date,
+      <if test="workPlace != null" >
+        work_place,
+      </if>
+      <if test="houseAddress != null" >
+        house_address,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ownerName != null" >
+        #{ownerName,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerCardid != null" >
+        #{ownerCardid,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerPhone != null" >
+        #{ownerPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerContract != null" >
+        #{ownerContract,jdbcType=VARCHAR},
+      </if>
+      now(),
+      <if test="workPlace != null" >
+        #{workPlace,jdbcType=VARCHAR},
+      </if>
+      <if test="houseAddress != null" >
+        #{houseAddress,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+    <insert id="insert" parameterType="org.edu.model.Owner" >
+    insert into owner (owner_id, owner_name, owner_cardID,
+      owner_phone, owner_contract, buy_date,
+      work_place, house_address)
+    values (#{ownerId,jdbcType=BIGINT}, #{ownerName,jdbcType=VARCHAR}, #{ownerCardid,jdbcType=VARCHAR},
+      #{ownerPhone,jdbcType=VARCHAR}, #{ownerContract,jdbcType=VARCHAR}, #{buyDate,jdbcType=TIMESTAMP},
+      #{workPlace,jdbcType=VARCHAR}, #{houseAddress,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.edu.model.Owner" >
+    update owner
+    set owner_name = #{ownerName,jdbcType=VARCHAR},
+      owner_cardID = #{ownerCardid,jdbcType=VARCHAR},
+      owner_phone = #{ownerPhone,jdbcType=VARCHAR},
+      owner_contract = #{ownerContract,jdbcType=VARCHAR},
+      buy_date = #{buyDate,jdbcType=TIMESTAMP},
+      work_place = #{workPlace,jdbcType=VARCHAR},
+      house_address = #{houseAddress,jdbcType=VARCHAR}
+    where owner_id = #{ownerId,jdbcType=BIGINT}
+  </update>
+</mapper>

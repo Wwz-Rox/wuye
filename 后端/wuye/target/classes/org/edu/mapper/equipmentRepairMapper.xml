@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.EquipmentRepairDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.EquipmentRepair" >
+    <id column="equ_repair_id" property="equRepairId" jdbcType="BIGINT" />
+    <result column="equ_repair_name" property="equRepairName" jdbcType="VARCHAR" />
+    <result column="equ_repair_addr" property="equRepairAddr" jdbcType="VARCHAR" />
+    <result column="equ_repair_date" property="equRepairDate" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+    <result column="equ_repair_person" property="equRepairPerson" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    equ_repair_id, equ_repair_name, equ_repair_addr, equ_repair_date, status, note, equ_repair_person
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from equipment_repair
+    where equ_repair_id = #{equRepairId,jdbcType=BIGINT}
+  </select>
+  <!--查询设备是否报修-->
+  <select id="selectIsRepair" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from equipment_repair
+    where equ_repair_name = #{equRepairName,jdbcType=VARCHAR}
+  </select>
+    <!--删除-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from equipment_repair
+    where equ_repair_id = #{equRepairId,jdbcType=BIGINT}
+  </delete>
+    <!--更新状态-->
+    <update id="updateByPrimaryKey" parameterType="java.lang.Long" >
+    update equipment_repair
+    set
+      status = "已维修"
+    where equ_repair_id = #{equRepairId,jdbcType=BIGINT}
+  </update>
+    <!--查询-->
+    <select id="selectEquipmentRepair" resultMap="BaseResultMap" parameterType="org.edu.bo.equipmentRepair.QryEquipmentRepairReqBO" >
+        select
+        <include refid="Base_Column_List" />
+        from equipment_repair
+        where 1=1
+        <if test="equRepairName != null and equRepairName != '' ">
+          and equ_repair_name like CONCAT('%',#{equRepairName},'%')
+        </if>
+    </select>
+<!--插入记录表-->
+  <insert id="insertRecord" parameterType="java.lang.Long">
+
+		INSERT into repair_record
+	(record_name,record_addr,status,askrepair_time,rep_time,rep_person,repair_num,repair_phone,rep_company)
+
+	(select b.equ_repair_name,b.equ_repair_addr,b.`status`,b.equ_repair_date,now(),a.repair_name,a.repair_num ,a.repair_tel,a.company
+	from repair_person a left join equipment_repair b on a.equ_repair_id = b.equ_repair_id
+	WHERE a.equ_repair_id = #{equRepairId,jdbcType=BIGINT})
+  </insert>
+    <!--添加-->
+  <insert id="insertSelective" parameterType="org.edu.bo.equipmentRepair.AddEquipmentRepairReqBO" >
+    insert into equipment_repair
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <!--<if test="equRepairId != null" >-->
+        <!--equ_repair_id,-->
+      <!--</if>-->
+      <if test="equRepairName != null" >
+        equ_repair_name,
+      </if>
+      <if test="equRepairAddr != null" >
+        equ_repair_addr,
+      </if>
+        equ_repair_date,
+        status,
+      <if test="note != null" >
+        note,
+      </if>
+      <if test="equRepairPerson != null" >
+        equ_repair_person,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <!--<if test="equRepairId != null" >-->
+        <!--#{equRepairId,jdbcType=BIGINT},-->
+      <!--</if>-->
+      <if test="equRepairName != null" >
+        #{equRepairName,jdbcType=VARCHAR},
+      </if>
+      <if test="equRepairAddr != null" >
+        #{equRepairAddr,jdbcType=VARCHAR},
+      </if>
+      <!--<if test="equRepairDate != null" >-->
+        <!--#{equRepairDate,jdbcType=TIMESTAMP},-->
+      <!--</if>-->
+      now(),
+      "待维修",
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="equRepairPerson != null" >
+        #{equRepairPerson,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.edu.model.EquipmentRepair" >
+    update equipment_repair
+    <set >
+      <if test="equRepairName != null" >
+        equ_repair_name = #{equRepairName,jdbcType=VARCHAR},
+      </if>
+      <if test="equRepairAddr != null" >
+        equ_repair_addr = #{equRepairAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="equRepairDate != null" >
+        equ_repair_date = #{equRepairDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null" >
+        note = #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="equRepairPerson != null" >
+        equ_repair_person = #{equRepairPerson,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where equ_repair_id = #{equRepairId,jdbcType=BIGINT}
+  </update>
+
+</mapper>

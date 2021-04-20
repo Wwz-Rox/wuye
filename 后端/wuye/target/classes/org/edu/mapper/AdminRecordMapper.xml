@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.edu.dao.AdminRecordDao" >
+  <resultMap id="BaseResultMap" type="org.edu.model.AdminRecord" >
+    <id column="admin_record_id" property="adminRecordId" jdbcType="BIGINT" />
+    <result column="admin_record_name" property="adminRecordName" jdbcType="VARCHAR" />
+    <result column="admin_record_role" property="adminRecordRole" jdbcType="VARCHAR" />
+    <result column="admin_record_time" property="adminRecordTime" jdbcType="TIMESTAMP" />
+    <result column="admin_record_tel" property="adminRecordTel" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    admin_record_id, admin_record_name, admin_record_role, admin_record_time, admin_record_tel
+  </sql>
+    <!--查询管理员记录列表一一导出EXcel用-->
+    <select id="selectAdminRecordToGetExcel" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from admin_record
+    </select>
+    <!--查询管理员记录列表-->
+    <select id="selectAdminRecord" resultMap="BaseResultMap" parameterType="org.edu.bo.adminRecord.QryAdminRecordReqBO">
+        select
+        <include refid="Base_Column_List"/>
+        from admin_record
+        where 1=1
+        <if test="adminRecordName != null and adminRecordName != '' ">
+          and admin_record_name like CONCAT('%',#{adminRecordName},'%')
+        </if>
+        <if test="startTime != null ">
+            and admin_record_time between #{startTime}
+        </if>
+        <if test="endTime != null ">
+            and  #{endTime}
+        </if>
+      order by admin_record_time desc
+    </select>
+    <!--删除-->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from admin_record
+    where admin_record_id = #{adminRecordId,jdbcType=BIGINT}
+  </delete>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from admin_record
+    where admin_record_id = #{adminRecordId,jdbcType=BIGINT}
+  </select>
+
+
+
+
+
+  <insert id="insert" parameterType="org.edu.model.AdminRecord" >
+    insert into admin_record (admin_record_id, admin_record_name, admin_record_role, 
+      admin_record_time, admin_record_tel)
+    values (#{adminRecordId,jdbcType=BIGINT}, #{adminRecordName,jdbcType=VARCHAR}, #{adminRecordRole,jdbcType=VARCHAR}, 
+      #{adminRecordTime,jdbcType=TIMESTAMP}, #{adminRecordTel,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="org.edu.model.AdminRecord" >
+    insert into admin_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="adminRecordId != null" >
+        admin_record_id,
+      </if>
+      <if test="adminRecordName != null" >
+        admin_record_name,
+      </if>
+      <if test="adminRecordRole != null" >
+        admin_record_role,
+      </if>
+      <if test="adminRecordTime != null" >
+        admin_record_time,
+      </if>
+      <if test="adminRecordTel != null" >
+        admin_record_tel,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="adminRecordId != null" >
+        #{adminRecordId,jdbcType=BIGINT},
+      </if>
+      <if test="adminRecordName != null" >
+        #{adminRecordName,jdbcType=VARCHAR},
+      </if>
+      <if test="adminRecordRole != null" >
+        #{adminRecordRole,jdbcType=VARCHAR},
+      </if>
+      <if test="adminRecordTime != null" >
+        #{adminRecordTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="adminRecordTel != null" >
+        #{adminRecordTel,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.edu.model.AdminRecord" >
+    update admin_record
+    <set >
+      <if test="adminRecordName != null" >
+        admin_record_name = #{adminRecordName,jdbcType=VARCHAR},
+      </if>
+      <if test="adminRecordRole != null" >
+        admin_record_role = #{adminRecordRole,jdbcType=VARCHAR},
+      </if>
+      <if test="adminRecordTime != null" >
+        admin_record_time = #{adminRecordTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="adminRecordTel != null" >
+        admin_record_tel = #{adminRecordTel,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where admin_record_id = #{adminRecordId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.edu.model.AdminRecord" >
+    update admin_record
+    set admin_record_name = #{adminRecordName,jdbcType=VARCHAR},
+      admin_record_role = #{adminRecordRole,jdbcType=VARCHAR},
+      admin_record_time = #{adminRecordTime,jdbcType=TIMESTAMP},
+      admin_record_tel = #{adminRecordTel,jdbcType=VARCHAR}
+    where admin_record_id = #{adminRecordId,jdbcType=BIGINT}
+  </update>
+</mapper>

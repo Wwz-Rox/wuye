@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<!--添加管理员-->
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+<script src="js/vue.js" type="text/javascript" charset="UTF-8"></script>
+<script src="js/axios.min.js" type="text/javascript" charset="UTF-8"></script>
+<script src="js/全局.js" type="text/javascript" charset="UTF-8"></script>
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>添加管理员 - 管理员管理 - H-ui.admin v3.1</title>
+<meta name="keywords" content="H-ui.admin v3.1,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description" content="H-ui.admin v3.1，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+	<div id="app">
+<article class="page-container">
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-4">楼号：</label>
+		<div class="formControls col-xs-8 col-sm-5">
+			<input v-model="buildingNumber" type="text" class="input-text" >
+		</div>
+	</div>
+&nbsp;&nbsp;
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-4">单元号：</label>
+		<div class="formControls col-xs-8 col-sm-5">
+			<input v-model="unitNumber" type="text" class="input-text" >
+		</div>
+	</div>
+		&nbsp;&nbsp;
+		<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-3">门牌号：</label>
+		<div class="formControls col-xs-8 col-sm-5">
+			<input  v-model="houseNumber" type="text" class="input-text" >
+		</div>
+	</div>
+	&nbsp;&nbsp;
+		<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-3">建筑面积：</label>
+		<div class="formControls col-xs-8 col-sm-5">
+			<input  v-model="houseSize" type="text" class="input-text" >
+		</div>
+	</div>
+	&nbsp;&nbsp;
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-3">户型：</label>
+		<div class="formControls col-xs-8 col-sm-5"> <span class="select-box" style="width:150px;">
+			<select class="select" name="adminRole" size="1" v-model="selected">
+				<option value="单元式">单元式</option>
+				<option value="公寓式">公寓式</option>
+				<option value="复式">复式</option>
+				<option value="跃层式">跃层式</option>
+				<option value="小户型式">小户型式</option>
+			</select>
+			</span> </div>
+	</div>
+	&nbsp;&nbsp;
+	<div class="row cl">
+		<label class="form-label col-xs-2 col-sm-3">备注：</label>
+		<div class="formControls col-xs-8 col-sm-5">
+			<input v-model="note" type="text" class="input-text" >
+		</div>
+	</div>&nbsp;&nbsp;
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<!--<input @click="add" class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">-->
+				<button @click="edit" class="btn btn-primary radius" type="submit" >提交</button>
+		</div>
+	</div>
+</article>
+</div>
+<!--_footer 作为公共模版分离出去--> 
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script> 
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script> 
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script> 
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script> 
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script> 
+<!--/请在上方写此页面业务相关的脚本-->
+<script type="text/javascript">
+	axios.defaults.withCredentials=true;
+	var vue =new Vue({
+			el:'#app',     
+			data:{
+				buildingNumber:'',
+				unitNumber:'',
+				houseNumber:'',
+				houseSize:'',
+				selected:'',
+				note:''
+			},
+			created:function(){
+				this.init();
+			},
+			methods:{
+//************************************************加载信息  ****************************************				
+				init:function(){
+					var self=this;
+//					alert("编辑页面进来了init函数");
+					var admid =sessionStorage.getItem("houseId");
+//					alert("拿到编辑页面的管理员ID"+admid);
+					axios.get(web_server+"/HouseEdit",{params:{houseId:admid}}) 
+					.then(function(result){
+						if(result.status==200){
+							if(result.data.data.houseType == "单元式"){
+								self.selected=result.data.data.houseType;
+							}
+							if(result.data.data.houseType == "公寓式"){
+								self.selected=result.data.data.houseType;
+							}
+							if(result.data.data.houseType == "复式"){
+								self.selected=result.data.data.houseType;
+							}
+							if(result.data.data.houseType == "跃层式"){
+								self.selected=result.data.data.houseType;
+							}
+							if(result.data.data.houseType == "小户型式"){
+								self.selected=result.data.data.houseType;
+							}
+							
+//							alert("data数据是"+JSON.stringify(result.data.data))
+//							alert("rows数据是"+JSON.stringify(result.data.data.rows))
+//							alert("楼号是"+JSON.stringify(result.data.data.buildingNumber))
+							self.buildingNumber=result.data.data.buildingNumber;
+							self.unitNumber=result.data.data.unitNumber;
+							self.houseNumber=result.data.data.houseNumber;
+							self.houseSize=result.data.data.houseSize;
+							self.note=result.data.data.note;
+						}
+					})
+					.catch(function(error){
+						console.log(error);
+					})
+				},
+//************************************************编辑  ****************************************			
+				edit:function(){
+//					alert("编辑页面来到编辑函数");
+					var admid =sessionStorage.getItem("houseId");
+//					alert("拿到编辑函数的管理员ID"+admid);
+					var self=this;
+					var editAdminReqBO={
+				'note':self.note,
+					'buildingNumber':self.buildingNumber,
+					'unitNumber':self.unitNumber,
+					'houseNumber':self.houseNumber,
+					'houseSize':self.houseSize,
+					'houseType':self.selected,
+					'houseId':admid
+										};
+					axios.post(web_server+"/HouseEdit2",editAdminReqBO)
+					.then(function(result){
+//						alert("进来了，是"+JSON.stringify(result));//不知道为什么json数据最外层有个data
+						if(result.status==200){
+//							alert("编辑成功！");
+//							window.location.href="admin-list.html"
+//							parent.location.href="household-list.html"//在父页面打开新页面
+layer.msg('编辑成功!',{icon:1,time:1000});
+            			setTimeout(function() {
+               				parent.location.href="house-list.html"//在父页面打开新页面
+            					},800)
+						}else{
+							console.log(result.message);
+						}
+						
+					})
+					.catch(function(error){
+						console.log(error);
+					})
+					
+				}
+			
+			}
+		})
+	
+</script>
+</body>
+
+</html>
